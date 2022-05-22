@@ -1,10 +1,12 @@
 import Fastify from 'fastify'
 import schedule from './plugins/schedule.js'
+import dbConnector from './ext_plugins/mongo.js'
 
 const fastify = Fastify({
   logger: true
 })
 
+fastify.register(dbConnector)
 fastify.register(schedule)
 
 // Run the server!
