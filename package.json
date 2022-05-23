@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@fastify/mongodb": "^5.0.0",
+    "agenda": "^4.3.0",
     "fastify": "^3.29.0",
     "fastify-plugin": "^3.0.1"
   },

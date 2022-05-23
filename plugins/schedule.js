@@ -4,16 +4,22 @@ async function schedule (fastify, options) {
 
     fastify.get('/schedule', async (request, reply) => {
 
-        // This just adds a dummy response, this is useless but shows a little bit of what you can do
-        const entries = fastify.mongo.db.collection('entries')
-        entries.insertOne({ "a": 3 }, function (err, resp) {
-            if (err) {
-                reply.send(err)
-                return
-            }
+        const agenda = fastify.agenda
 
-            reply.send(resp)
+        agenda.define('abc', async (job) => {
+            console.log('holy moly boly')
         })
+
+        /**
+         * Interesting note on scheduling:
+         * the name is unique. So that means you can't schedule two jobs under the same name,
+         * they will replace each other
+         * 
+         * That makes sense, but we'll need to make sure we can define a unique name for a job to be ran
+         */
+        agenda.every('*/2 * * * *', 'abc')
+
+        reply.send('ok')
     })
 }
 
