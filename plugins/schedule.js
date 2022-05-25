@@ -2,25 +2,47 @@
 
 async function schedule (fastify, options) {
 
-    fastify.get('/schedule', async (request, reply) => {
+    fastify.post('/schedule', async (request, reply) => {
+
+        const body = request.body
+
+        if (!isValid(body)) {
+
+            reply.status(400)
+            return 'bad request'
+        }
+
+        console.log(body)
+
+        // Generate a unique taskId for the agenda
+        const taskId = body.courseId + ';' + body.date
 
         const agenda = fastify.agenda
 
-        agenda.define('abc', async (job) => {
-            console.log('holy moly boly')
+        agenda.define(taskId, async (job) => {
+
+            console.log('Starting service for task: ' + taskId)
+
+            // Run the task from an imported function from another file
         })
 
-        /**
-         * Interesting note on scheduling:
-         * the name is unique. So that means you can't schedule two jobs under the same name,
-         * they will replace each other
-         * 
-         * That makes sense, but we'll need to make sure we can define a unique name for a job to be ran
-         */
-        agenda.every('*/2 * * * *', 'abc')
-
+        agenda.every('*/2 * * * *', taskId)
+    
         reply.send('ok')
     })
+}
+
+function isValid (body) {
+
+    return body != null
+        && !isEmpty(body.courseId)
+        && !isEmpty(body.date)
+        && !isEmpty(body.earliestTime)
+        && !isEmpty(body.latestTime)
+}
+
+function isEmpty (str) {
+    return (!str || str.length === 0 );
 }
 
 export default schedule
