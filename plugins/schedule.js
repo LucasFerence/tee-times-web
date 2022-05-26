@@ -21,6 +21,8 @@ async function schedule (fastify, options) {
             
             console.log('Instantly starting service: ' + taskId)
             fastify.book(request.body)
+
+            return 'ok'
         }
 
         const agenda = fastify.agenda
