@@ -1,14 +1,21 @@
 import Fastify from 'fastify'
-import schedule from './plugins/schedule.js'
+
 import dbConnector from './ext_plugins/mongo.js'
 import agenda from './ext_plugins/agenda.js'
+
+import schedule from './plugins/schedule.js'
+import bookTime from './plugins/book.js'
 
 const fastify = Fastify({
   logger: true
 })
 
+// Plugins
 fastify.register(dbConnector)
 fastify.register(agenda)
+fastify.register(bookTime)
+
+// Routes
 fastify.register(schedule)
 
 // Run the server!

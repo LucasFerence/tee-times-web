@@ -6,43 +6,35 @@ async function schedule (fastify, options) {
 
         const body = request.body
 
-        if (!isValid(body)) {
+        if (!fastify.validateBookReq(body)) {
 
             reply.status(400)
             return 'bad request'
         }
 
-        console.log(body)
-
         // Generate a unique taskId for the agenda
         const taskId = body.courseId + ';' + body.date
+
+        // If requested to be instant, just run it
+        // Probably not a bad idea to remove/put behind high auth to do this
+        if (body.isInstant) {
+            
+            console.log('Instantly starting service: ' + taskId)
+            fastify.book(request.body)
+        }
 
         const agenda = fastify.agenda
 
         agenda.define(taskId, async (job) => {
 
             console.log('Starting service for task: ' + taskId)
-
-            // Run the task from an imported function from another file
+            fastify.book(request.body)
         })
 
         agenda.every('*/2 * * * *', taskId)
     
         reply.send('ok')
     })
-}
-
-function isValid (body) {
-
-    return body != null
-        && !isEmpty(body.courseId)
-        && !isEmpty(body.date)
-        && !isEmpty(body.earliestTime)
-        && !isEmpty(body.latestTime)
-}
-
-function isEmpty (str) {
-    return (!str || str.length === 0 );
 }
 
 export default schedule
