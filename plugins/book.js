@@ -30,17 +30,13 @@ function doBookTime (params) {
     driver.get('https://google.com?' + params.courseId)
 }
 
-function validate (body) {
+function validate (fastify, body) {
 
     return body != null
-        && !isEmpty(body.courseId)
-        && !isEmpty(body.date)
-        && !isEmpty(body.earliestTime)
-        && !isEmpty(body.latestTime)
-}
-
-function isEmpty (str) {
-    return (!str || str.length === 0 );
+        && !fastify.isStrEmpty(body.courseId)
+        && !fastify.isStrEmpty(body.date)
+        && !fastify.isStrEmpty(body.earliestTime)
+        && !fastify.isStrEmpty(body.latestTime)
 }
 
 export default fastifyPlugin(bookTime)

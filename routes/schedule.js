@@ -6,7 +6,7 @@ async function schedule (fastify, options) {
 
         const body = request.body
 
-        if (!fastify.validateBookReq(body)) {
+        if (!fastify.validateBookReq(fastify, body)) {
 
             reply.status(400)
             return 'bad request'
