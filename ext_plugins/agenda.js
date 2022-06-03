@@ -1,5 +1,4 @@
 import fastifyPlugin from 'fastify-plugin'
-
 import { Agenda } from 'agenda'
 
 async function agenda (fastify, options) {

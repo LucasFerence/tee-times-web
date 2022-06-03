@@ -1,5 +1,6 @@
 import Fastify from 'fastify'
 
+import config from './ext_plugins/config.js'
 import dbConnector from './ext_plugins/mongo.js'
 import agenda from './ext_plugins/agenda.js'
 
@@ -14,6 +15,7 @@ const fastify = Fastify({
 })
 
 // External plugins
+fastify.register(config)
 fastify.register(dbConnector)
 fastify.register(agenda)
 
