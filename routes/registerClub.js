@@ -1,4 +1,12 @@
 
+/**
+ * Registers a new club. This will overwrite all club and course data for the club.
+ * This is meant to be a complete definition of a club, not a partial update of only
+ * club data or only course data
+ * 
+ * @param {*} fastify 
+ * @param {*} options 
+ */
 async function registerClub (fastify, options) {
 
     fastify.post('/registerClub',  async (request, reply) => {
@@ -27,10 +35,24 @@ async function upsertClub (collection, clubReq) {
     const filter = { clubId: clubReq.clubId }
     const options = { upsert: true }
 
+    const courses = []
+
+    for (const c of clubReq.courses) {
+
+        // Build a course and add it in the list
+        // This will completely override all courses
+        courses.push(
+            {
+                courseId: c.courseId,
+                courseName: c.courseName
+            }
+        )
+    }
+
     const updateDoc = {
         $set: {
             clubName: clubReq.clubName,
-            courses: []
+            courses: courses
         }
     }
 

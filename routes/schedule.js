@@ -6,10 +6,19 @@ async function schedule (fastify, options) {
 
         const body = request.body
 
+        // Check to make sure the body has the correect parameters
         if (!fastify.validateBookReq(fastify, body)) {
 
             reply.status(400)
             return 'bad request'
+        }
+
+        // Make sure the club is supported
+        const isSupportedClub = await fastify.isClubSupported(fastify, body.clubId, body.courseId)
+        if (!isSupportedClub) {
+
+            reply.status(400)
+            return 'unsupported club'
         }
 
         // Generate a unique taskId for the agenda
