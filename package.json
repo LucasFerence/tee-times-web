@@ -5,6 +5,7 @@
     "config": "^3.3.7",
     "fastify": "^3.29.0",
     "fastify-plugin": "^3.0.1",
+    "luxon": "^2.4.0",
     "selenium-webdriver": "^4.1.2"
   },
   "scripts": {

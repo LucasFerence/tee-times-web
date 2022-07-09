@@ -1,12 +1,12 @@
 import fastifyPlugin from 'fastify-plugin'
 
 // Register enums for supported clubs and courses within them
-async function clubs (fastify, options) {
+async function clubs(fastify, options) {
 
     fastify.decorate('isClubSupported', isSupported)
 }
 
-async function isSupported (fastify, club, course) {
+async function isSupported(fastify, club, course) {
 
     // See if the club is supported
 

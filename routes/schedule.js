@@ -13,6 +13,13 @@ async function schedule (fastify, options) {
             return 'bad request'
         }
 
+        const isSupportedUser = await fastify.isUserChronogolfSupported(fastify, body.userId)
+        if (!isSupportedUser) {
+
+            reply.status(400)
+            return 'unsupported user'
+        }
+
         // Make sure the club is supported
         const isSupportedClub = await fastify.isClubSupported(fastify, body.clubId, body.courseId)
         if (!isSupportedClub) {
@@ -29,7 +36,7 @@ async function schedule (fastify, options) {
         if (body.isInstant) {
             
             console.log('Instantly starting service: ' + taskId)
-            fastify.book(request.body)
+            fastify.book(fastify, request.body)
 
             return 'ok'
         }
@@ -39,7 +46,7 @@ async function schedule (fastify, options) {
         agenda.define(taskId, async (job) => {
 
             console.log('Starting service for task: ' + taskId)
-            fastify.book(request.body)
+            fastify.book(fastify, request.body)
         })
 
         agenda.every('*/2 * * * *', taskId)
