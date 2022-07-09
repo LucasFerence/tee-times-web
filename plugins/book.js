@@ -133,10 +133,15 @@ async function doBookTime(fastify, params) {
             await driver
                 .findElement({tagName: 'reservation-review-submit-button'})
                 .findElement({xpath: "//button[@type='submit']"})
+                .click()
+
+            await driver.findElement({className: 'alert-success'})
         } else {
 
             console.log('Skipping checkout...')
         }
+    } catch (err) {
+        console.log(err)
     } finally {
         driver.close()
     }
