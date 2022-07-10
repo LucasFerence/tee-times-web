@@ -25,7 +25,6 @@ async function registerClub(fastify, options) {
             fastify.field('courses')
                 .list()
                 .obj([
-
                     fastify.field('courseId')
                         .str()
                         .required(),
