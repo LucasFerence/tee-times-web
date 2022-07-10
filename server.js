@@ -4,7 +4,7 @@ import config from './ext_plugins/config.js'
 import dbConnector from './ext_plugins/mongo.js'
 import agenda from './ext_plugins/agenda.js'
 
-import util from './plugins/util.js'
+import validate from './plugins/validate.js'
 
 import users from './plugins/users.js'
 import clubs from './plugins/clubs.js'
@@ -19,7 +19,7 @@ const fastify = Fastify({
   logger: true
 })
 
-fastify.register(util)
+fastify.register(validate)
 
 // External plugins
 fastify.register(config)

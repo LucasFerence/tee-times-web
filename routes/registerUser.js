@@ -1,14 +1,23 @@
 async function registerUser(fastify, options) {
 
     fastify.post('/registerUser', async (request, reply) => {
+
+        const body = request.body
+
+        const fields = [
+            fastify.field('userId')
+                .str()
+                .required()
+        ]
+
+        const isValid = body != null && fastify.validateFields(body.user, fields)
         
-        if (!isValidRequest(fastify, request.body)) {
+        if (!isValid) {
 
             reply.status(400)
             return 'bad request'
         }
 
-        const body = request.body
         const db = fastify.mongo.db
 
         upsertUser(fastify, db.collection('users'), body.user)
@@ -40,13 +49,6 @@ async function upsertUser(fastify, collection, userReq) {
     console.log(
         `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
     )
-}
-
-function isValidRequest(fastify, body) {
-
-    return body != null
-        && body.user != null
-        && !fastify.isStrEmpty(body.user.userId)
 }
 
 export default registerUser

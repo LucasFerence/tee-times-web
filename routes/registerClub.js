@@ -10,16 +10,43 @@
 async function registerClub(fastify, options) {
 
     fastify.post('/registerClub',  async (request, reply) => {
+
+        const body = request.body
+
+        const fields = [
+            fastify.field('clubId')
+                .str()
+                .required(),
+
+            fastify.field('clubName')
+                .str()
+                .required(),
+
+            fastify.field('courses')
+                .list()
+                .obj([
+
+                    fastify.field('courseId')
+                        .str()
+                        .required(),
+
+                    fastify.field('courseName')
+                        .str()
+                        .required()
+                ])
+                .required()
+        ]
         
         // Store a club and courses. Make sure to refresh the plugin on fastify after something is added
+
+        const isValid = body != null && fastify.validateFields(body.club, fields)
         
-        if (!isValidRequest(fastify, request.body)) {
+        if (!isValid) {
 
             reply.status(400)
             return 'bad request'
         }
 
-        const body = request.body
         const db = fastify.mongo.db
 
         upsertClub(db.collection('clubs'), body.club)

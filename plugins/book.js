@@ -9,7 +9,6 @@ const FORMAT = 'yyyy-MM-dd t'
 
 async function bookTime(fastify, options) {
 
-    fastify.decorate('validateBookReq', validate)
     fastify.decorate('book', doBookTime)
 }
 

@@ -6,8 +6,52 @@ async function schedule (fastify, options) {
 
         const body = request.body
 
+        const fields = [
+            fastify.field('userId')
+                .str()
+                .required(),
+            
+            fastify.field('clubId')
+                .str()
+                .required(),
+
+            fastify.field('courseId')
+                .str()
+                .required(),
+
+            fastify.field('date')
+                .str()
+                .required(),
+
+            fastify.field('amtPlayers')
+                .int()
+                .required()
+                .validate(f => f != 0),
+
+            fastify.field('earliestTime')
+                .str()
+                .required(),
+
+            fastify.field('latestTime')
+                .str()
+                .required(),
+
+            // Optional fields
+
+            fastify.field('isInstant')
+                .bool(),
+
+            fastify.field('isHeadless')
+                .bool(),
+
+            fastify.field('checkout')
+                .bool()
+        ]
+
+        const isValid = body != null && fastify.validateFields(body, fields)
+
         // Check to make sure the body has the correect parameters
-        if (!fastify.validateBookReq(fastify, body)) {
+        if (!isValid) {
 
             reply.status(400)
             return 'bad request'
