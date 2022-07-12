@@ -41,7 +41,9 @@ class Field {
 
     constructor(name) {
         this.name = name
-        this.validations = []
+        this.validations = [
+            f => this.validateType(f)
+        ]
     }
 
     validate(validation) {
@@ -51,23 +53,32 @@ class Field {
         return this
     }
 
-    int() {
+    validateType(f) {
 
-        this.type = 'int'
+        if (this.isList) {
+            return f.constructor == Array
+        }
+
+        return typeof f == this.type
+    }
+
+    num() {
+
+        this.type = 'number'
 
         return this
     }
 
     bool() {
 
-        this.type = 'bool'
+        this.type = 'boolean'
 
         return this
     }
 
     str() {
 
-        this.type = 'str'
+        this.type = 'string'
 
         return this.validate(f =>
             this.processOneOrMany(f, x => !isStrEmpty(x)) 
@@ -76,7 +87,7 @@ class Field {
 
     obj(fields) {
 
-        this.type = 'obj'
+        this.type = 'object'
 
         return this.validate(f =>
             this.processOneOrMany(f, x => validateFields(x, fields))

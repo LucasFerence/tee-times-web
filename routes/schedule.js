@@ -24,7 +24,7 @@ async function schedule (fastify, options) {
                 .required(),
 
             fastify.field('amtPlayers')
-                .int()
+                .num()
                 .required()
                 .validate(f => f != 0),
 

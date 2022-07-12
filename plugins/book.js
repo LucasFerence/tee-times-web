@@ -146,16 +146,4 @@ async function doBookTime(fastify, params) {
     }
 }
 
-function validate(fastify, body) {
-
-    return body != null
-        && !fastify.isStrEmpty(body.userId)
-        && !fastify.isStrEmpty(body.clubId)
-        && !fastify.isStrEmpty(body.courseId)
-        && !fastify.isStrEmpty(body.date)
-        && body.amtPlayers != null && body.amtPlayers != 0
-        && !fastify.isStrEmpty(body.earliestTime)
-        && !fastify.isStrEmpty(body.latestTime)
-}
-
 export default fastifyPlugin(bookTime)
