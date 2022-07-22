@@ -18,11 +18,12 @@ async function doBookTime(fastify, params) {
 
     if (params.isHeadless) {
         options.headless()
+        options.addArguments('--no-sandbox')
     }
 
     const driver = new webdriver.Builder()
         .forBrowser('chrome')
-        .usingServer('http://localhost:4444/wd/hub')
+        .usingServer('http://webdriver:4444/wd/hub')
         .setChromeOptions(options)
         .build()
 
@@ -119,12 +120,18 @@ async function doBookTime(fastify, params) {
         await driver.findElement({id: 'sessionEmail'}).sendKeys(user.chronogolfUsername)
         await driver.findElement({id: 'sessionPassword'}).sendKeys(user.chronogolfPassword)
 
+        console.log('inserted keys')
+
         await driver.findElement({xpath: "//input[@type='submit']"}).click()
+
+        console.log('clicked login')
 
         await driver
             .findElement({tagName: 'reservation-review-terms'})
             .findElement({xpath: "//input[@type='checkbox']"})
             .click()
+
+        console.log('clicked agree to terms')
 
         if (params.checkout == true) {
 
@@ -142,7 +149,9 @@ async function doBookTime(fastify, params) {
     } catch (err) {
         console.log(err)
     } finally {
+
         driver.close()
+        driver.quit()
     }
 }
 

@@ -38,7 +38,7 @@ fastify.register(registerUser)
 fastify.register(registerClub)
 
 // Run the server!
-fastify.listen(4000, '0.0.0.0', function (err, address) {
+fastify.listen(5050, '0.0.0.0', function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)

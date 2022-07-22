@@ -25,9 +25,5 @@
     "url": "https://github.com/LucasFerence/tee-times-web/issues"
   },
   "homepage": "https://github.com/LucasFerence/tee-times-web#readme",
-  "description": "",
-  "devDependencies": {
-    "concurrently": "^7.2.1",
-    "webdriver-manager": "^12.1.8"
-  }
+  "description": ""
 }

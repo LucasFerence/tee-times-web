@@ -2,9 +2,11 @@
     "Root": {
         
         "dbConfig": {
-            "host": "localhost",
+            "host": "mongo",
             "port": "27017",
-            "db": "teetimes"
+            "db": "teetimes",
+            "username": "root",
+            "password": "password"
         }
     }
 }

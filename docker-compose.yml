@@ -1,0 +1,36 @@
+# example: https://medium.com/mozilla-club-bbsr/dockerizing-a-mern-stack-web-application-ebf78babf136
+
+version: '3.7'
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: tee-times-web-server
+    container_name: tee-times-web-server
+    restart: always
+    command: node server.js
+    volumes:
+      - ./server/:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "5050:5050"
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - /data/db
+  webdriver:
+    image: selenium/standalone-chrome
+    restart: always
+    ports:
+      - "4444:4444"
+    

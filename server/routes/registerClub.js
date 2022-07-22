@@ -48,7 +48,7 @@ async function registerClub(fastify, options) {
 
         const db = fastify.mongo.db
 
-       //  upsertClub(db.collection('clubs'), body.club)
+        upsertClub(db.collection('clubs'), body.club)
 
         reply.send('ok')
     })

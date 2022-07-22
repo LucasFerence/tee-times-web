@@ -5,7 +5,30 @@ async function dbConnector (fastify, options) {
 
     const config = fastify.config.dbConfig
 
-    if (!isValidConfig(config)) {
+    const fields = [
+        fastify.field('host')
+            .str()
+            .required(),
+
+        fastify.field('port')
+            .str()
+            .required(),
+
+        fastify.field('db')
+            .str()
+            .required(),
+
+        fastify.field('username')
+            .str(),
+        
+        fastify.field('password')
+            .str()
+    ]
+
+    const isValid = config != null && fastify.validateFields(config, fields)
+
+    if (!isValid) {
+
         throw new Error('Invalid mongo configuration!')
     }
 
@@ -13,13 +36,6 @@ async function dbConnector (fastify, options) {
     fastify.register(fastifyMongo, {
         url: `mongodb://${config.host}:${config.port}/${config.db}`
     })
-}
-
-function isValidConfig (config) {
-    return config != null
-        && config.host != null
-        && config.port != null
-        && config.db != null
 }
 
 export default fastifyPlugin(dbConnector)
