@@ -16,8 +16,6 @@ services:
       - /usr/src/app/node_modules
     ports:
       - "5050:5050"
-    depends_on:
-      - mongo
     environment:
       - NODE_ENV=development
   client:
@@ -28,10 +26,8 @@ services:
     container_name: tee-times-web-client
     command: npm start
     volumes:
-      - ./client/:/usr/app
-      - /usr/app/node_modules
-    depends_on:
-      - server
+      - ./client/:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
       - "3000:3000"
   mongo:

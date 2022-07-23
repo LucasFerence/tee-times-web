@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { MantineProvider, Button } from '@mantine/core';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import bookTime from './services/TeeTimeService'
+
+class App extends React.Component {
+
+  render() {
+    return (
+      <MantineProvider
+        theme = {{
+          
+          colors: {
+            'masters-green': ['#006747', '#006747', '#006747', '#006747', '#006747', '#006747', '#006747']
+          }
+        }}
+      >
+  
+        <Button color="masters-green" onClick={bookTime}>Book time test</Button>
+  
+      </MantineProvider>
+    );
+  }
 }
 
 export default App;
