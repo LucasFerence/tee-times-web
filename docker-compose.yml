@@ -20,6 +20,20 @@ services:
       - mongo
     environment:
       - NODE_ENV=development
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: tee-time-web-client
+    container_name: tee-times-web-client
+    command: npm start
+    volumes:
+      - ./client/:/usr/app
+      - /usr/app/node_modules
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
   mongo:
     image: mongo:latest
     container_name: mongo
