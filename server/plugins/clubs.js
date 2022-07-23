@@ -3,24 +3,36 @@ import fastifyPlugin from 'fastify-plugin'
 // Register enums for supported clubs and courses within them
 async function clubs(fastify, options) {
 
-    fastify.decorate('isClubSupported', isSupported)
+    fastify.decorate('chronogolfClub', createChronogolfClub)
 }
 
-async function isSupported(fastify, club, course) {
+function createChronogolfClub(id) {
+    return new ChronogolfClub(id)
+}
 
-    // See if the club is supported
+class ChronogolfClub {
 
-    const db = fastify.mongo.db
-    const collection = db.collection('clubs')
-
-    const query = { 
-        clubId: club,
-        'courses.courseId': course
+    constructor(id) {
+        this.id = id
     }
 
-    const count = await collection.countDocuments(query)
+    // -- Utility --
 
-    return count > 0
+    async isSupported(fastify, courseId) {
+        // See if the club is supported
+
+        const db = fastify.mongo.db
+        const collection = db.collection('clubs')
+
+        const query = {
+            clubId: this.id,
+            'courses.courseId': courseId
+        }
+
+        const count = await collection.countDocuments(query)
+
+        return count > 0
+    }
 }
 
 export default fastifyPlugin(clubs)

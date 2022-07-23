@@ -1,4 +1,4 @@
-async function registerUser(fastify, options) {
+async function userService(fastify, options) {
 
     fastify.post('/registerUser', async (request, reply) => {
 
@@ -51,4 +51,4 @@ async function upsertUser(fastify, collection, userReq) {
     )
 }
 
-export default registerUser
+export default userService

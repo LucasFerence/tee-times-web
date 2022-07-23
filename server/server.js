@@ -12,8 +12,8 @@ import teeTimes from './plugins/tee-times.js'
 import bookTime from './plugins/book.js'
 
 import schedule from './routes/schedule.js'
-import registerUser from './routes/registerUser.js'
-import registerClub from './routes/registerClub.js'
+import userService from './routes/userRoutes.js'
+import clubService from './routes/clubRoutes.js'
 
 const fastify = Fastify({
   logger: true
@@ -34,8 +34,8 @@ fastify.register(bookTime)
 
 // Routes
 fastify.register(schedule)
-fastify.register(registerUser)
-fastify.register(registerClub)
+fastify.register(userService)
+fastify.register(clubService)
 
 // Run the server!
 fastify.listen(5050, '0.0.0.0', function (err, address) {

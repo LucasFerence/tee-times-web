@@ -65,7 +65,7 @@ async function schedule (fastify, options) {
         }
 
         // Make sure the club is supported
-        const isSupportedClub = await fastify.isClubSupported(fastify, body.clubId, body.courseId)
+        const isSupportedClub = await fastify.chronogolfClub(body.clubId).isSupported(fastify, body.courseId)
         if (!isSupportedClub) {
 
             reply.status(400)
