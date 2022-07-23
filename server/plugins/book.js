@@ -120,18 +120,12 @@ async function doBookTime(fastify, params) {
         await driver.findElement({id: 'sessionEmail'}).sendKeys(user.chronogolfUsername)
         await driver.findElement({id: 'sessionPassword'}).sendKeys(user.chronogolfPassword)
 
-        console.log('inserted keys')
-
         await driver.findElement({xpath: "//input[@type='submit']"}).click()
-
-        console.log('clicked login')
 
         await driver
             .findElement({tagName: 'reservation-review-terms'})
             .findElement({xpath: "//input[@type='checkbox']"})
             .click()
-
-        console.log('clicked agree to terms')
 
         if (params.checkout == true) {
 
@@ -150,7 +144,6 @@ async function doBookTime(fastify, params) {
         console.log(err)
     } finally {
 
-        driver.close()
         driver.quit()
     }
 }
