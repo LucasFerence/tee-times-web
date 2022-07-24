@@ -45,8 +45,6 @@ async function clubRoutes(fastify, options) {
 
         const { clubId } = request.params
 
-        console.log(`Querying for clubId: ${clubId}`)
-
         const query = {
             clubId: clubId
         }
@@ -58,6 +56,29 @@ async function clubRoutes(fastify, options) {
         } else {
             reply.send(club)
         }
+    })
+
+    fastify.get('/courses/:clubId/:courseId', async (request, reply) => {
+
+        const { clubId, courseId } = request.params
+
+        const db = fastify.mongo.db
+        const collection = db.collection('clubs')
+
+        const options = {
+            projection: {
+                _id: 0,
+                courses: 1
+            }
+        }
+
+        const query = {
+            clubId: clubId,
+        }
+
+        const club = await collection.findOne(query, options)
+
+        return club?.courses?.find(c => c.courseId == courseId)
     })
 
     fastify.post('/registerClub',  async (request, reply) => {

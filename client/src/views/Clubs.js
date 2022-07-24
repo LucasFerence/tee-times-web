@@ -22,7 +22,7 @@ class Clubs extends React.Component {
         axios.get('clubs')
             .then(res => {
                 const clubs = res.data;
-                this.setState({clubs })
+                this.setState({ clubs })
             })
     }
 
