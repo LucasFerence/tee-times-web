@@ -2,7 +2,7 @@ import { React, useState, useEffect } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs'
 
-import { Button, Select } from '@mantine/core';
+import { Button, Select, Title } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 
@@ -40,6 +40,8 @@ function Course(props) {
 
     return (
         <form onSubmit={form.onSubmit(console.log)}>
+
+            <Title>{course.courseName}</Title>
 
             <Select
                 label="Number of players"

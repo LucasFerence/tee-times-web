@@ -1,69 +1,37 @@
-import React from 'react';
+import { React, useState, useEffect } from 'react';
 import axios from 'axios';
 
 import { Button } from '@mantine/core';
 import Course from './Course';
 
-class ClubCourses extends React.Component {
+function ClubCourses(props) {
 
-    constructor(props) {
-        super(props);
+    const [courses, setCourses] = useState([]);
 
-        this.state = {
-            courses: [],
-            currCourse: null
-        }
-    }
+    useEffect(() => {
 
-    componentDidMount() {
-        this.refreshStateFromApi()
-    }
-
-    componentDidUpdate(prevProps) {
-
-        if (this.props.clubId !== prevProps.clubId) {
-            this.refreshStateFromApi()
-        }
-    }
-
-    refreshStateFromApi() {
-        axios.get(`courses/${this.props.clubId}`)
+        axios.get(`courses/${props.clubId}`)
             .then(res => {
-                const courses = res.data.courses;
-                this.setState({ courses })
+                setCourses(res.data?.courses)
             })
-    }
 
-    selectCourse(courseId) {
-        this.setState({currCourse: courseId})
-    }
+    }, [props.clubId]);
 
-    render() {
+    const [currCourse, setCurrCourse] = useState();
 
-        let currCourse = this.state.currCourse
-            ? <Course clubId={this.props.clubId} courseId={this.state.currCourse}/>
-            : null
+    return (
+        <div>
+            {
+                courses.map(course =>
+                    <Button key={course.courseId} onClick={() => setCurrCourse(course.courseId)}>
+                        {course.courseName}
+                    </Button>
+                )
+            }
 
-        return (
-            <div>
-                <ul>
-                    {
-                        this.state.courses
-                            .map(course =>
-                                <Button
-                                    key={course.courseId} color="green"
-                                    onClick={() => this.selectCourse(course.courseId)}
-                                >
-                                    {course.courseName}
-                                </Button>
-                            )
-                    }
-                </ul>
-
-                {currCourse}
-            </div>
-        )
-    }
+            {currCourse != null && <Course clubId={props.clubId} courseId={currCourse}/>}
+        </div>
+    )
 }
 
 export default ClubCourses;

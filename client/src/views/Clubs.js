@@ -1,61 +1,37 @@
-import React from 'react';
+import { React, useState, useEffect } from 'react';
 import axios from 'axios';
 
 import { Button } from '@mantine/core';
 import ClubCourses from './ClubCourses';
 
-class Clubs extends React.Component {
+function Clubs(props) {
 
-    constructor(props) {
-        super(props);
+    const [clubs, setClubs] = useState([]);
 
-        this.selectClub = this.selectClub.bind(this);
-
-        this.state = {
-            clubs: [],
-            currClub: null
-        }
-      }
-
-    componentDidMount() {
+    useEffect(() => {
 
         axios.get('clubs')
             .then(res => {
-                const clubs = res.data;
-                this.setState({ clubs })
+                setClubs(res.data)
             })
-    }
 
-    selectClub(clubId) {
-        this.setState({currClub: clubId})
-    }
+    }, []);
 
-    render() {
+    const [currClub, setCurrClub] = useState();
 
-        let currClub = this.state.currClub
-            ? <ClubCourses clubId={this.state.currClub}/>
-            : null
-
-        return (
-            <div>
-                <ul>
-                    {
-                        this.state.clubs
-                            .map(club =>
-                                <Button
-                                    key={club.clubId} color="green"
-                                    onClick={() => this.selectClub(club.clubId)}
-                                >
-                                    {club.clubName}
-                                </Button>
-                            )
-                    }
-                </ul>
-
-                {currClub}
-            </div>
-        )
-    }
+    return (
+        <div>
+            {
+                clubs.map(club =>
+                    <Button key={club.clubId} onClick={() => setCurrClub(club.clubId)}>
+                        {club.clubName}
+                    </Button>
+                )
+            }
+            
+            {currClub != null && <ClubCourses clubId={currClub}/>}
+        </div>
+    )
 }
 
 export default Clubs
