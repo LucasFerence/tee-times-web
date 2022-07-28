@@ -7,6 +7,11 @@
             "db": "teetimes",
             "username": "root",
             "password": "password"
+        },
+
+        "chronogolf": {
+            "scheduleLimitDays": 8,
+            "scheduleLimitTime": "9:00 PM"
         }
     }
 }

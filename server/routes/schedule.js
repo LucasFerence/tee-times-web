@@ -1,3 +1,4 @@
+import { DateTime } from "luxon"
 // Plugins/routes for scheduling a tee time
 
 async function schedule (fastify, options) {
@@ -66,22 +67,69 @@ async function schedule (fastify, options) {
             return 'unsupported club'
         }
 
-        // Generate a unique taskId for the agenda
-        const taskId = `${body.userId};${body.courseId};${body.date}`
-        const agenda = fastify.agenda
+        const config = fastify.config.chronogolf
+        const isValidConfig = config != null && fastify.validateFields(
+            config,
+            [
+                fastify.field('scheduleLimitDays')
+                    .num()
+                    .required(),
 
-        agenda.define(taskId, async (job) => {
+                fastify.field('scheduleLimitTime')
+                    .str()
+                    .required()
+            ]
+        )
 
-            console.log('Starting service for task: ' + taskId)
-            fastify.book(fastify, body)
-        })
+        if (!isValidConfig) {
 
-        agenda.now(taskId)
+            reply.status(500)
+            return 'internal error'
+        }
 
-        // TODO: Don't schedule for now if it is too far in advance
-
-        reply.send('ok')
+        return await doSchedule(fastify, reply, body, config)
     })
+}
+
+async function doSchedule(fastify, reply, body, config) {
+
+    // Generate a unique taskId for the agenda
+    const taskId = `${body.userId};${body.courseId};${body.date}`
+    const agenda = fastify.agenda
+
+    const jobs = await agenda.jobs(
+        {name: taskId, nextRunAt: {$exists:true}}
+    )
+
+    // Check to see if the job already exists, if it does do not create a new one
+    if (jobs != null && jobs.length !== 0) {
+        console.error(`Job already exists: ${taskId}`)
+        reply.status(400)
+        return 'bad request'
+    }
+
+    agenda.define(taskId, async (job) => {
+
+        console.log('Starting service for task: ' + taskId)
+        fastify.book(fastify, body)
+    })
+
+    const now = DateTime.now()
+    const teeTimeDate = DateTime.fromISO(body.date)
+
+    const scheduleDate = teeTimeDate.minus({days: 7, hours: 3})
+
+    if (scheduleDate > now) {
+
+        console.log(`Scheduling job: ${taskId}`)
+        agenda.schedule(scheduleDate.toJSDate(), taskId)
+    } else {
+
+        console.log(`Executing job immediately: ${taskId}`)
+        agenda.now(taskId)
+    }
+
+    return 'ok'
 }
 
 export default schedule
