@@ -1,4 +1,5 @@
 import fastifyPlugin from 'fastify-plugin'
+import { DateTime } from "luxon"
 
 // General utilities
 async function validate(fastify, options) {
@@ -86,7 +87,16 @@ class Field {
         this.type = 'string'
 
         return this.validate(f =>
-            this.processOneOrMany(f, x => !isStrEmpty(x)) 
+            this.processOneOrMany(f, x => !this.isRequired || !isStrEmpty(x)) 
+        )
+    }
+
+    isoDate() {
+
+        return this.str().validate(f =>
+            this.processOneOrMany(f, x =>
+                DateTime.fromISO(x).isValid
+            )
         )
     }
 

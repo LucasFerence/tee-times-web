@@ -20,7 +20,7 @@ async function schedule (fastify, options) {
                 .required(),
 
             fastify.field('date')
-                .str()
+                .isoDate()
                 .required(),
 
             fastify.field('amtPlayers')
@@ -29,11 +29,11 @@ async function schedule (fastify, options) {
                 .validate(f => f != 0),
 
             fastify.field('earliestTime')
-                .str()
+                .isoDate()
                 .required(),
 
             fastify.field('latestTime')
-                .str()
+                .isoDate()
                 .required(),
 
             // Optional fields

@@ -39,9 +39,9 @@ function Course(props) {
     })
 
     return (
-        <form onSubmit={form.onSubmit(console.log)}>
+        <form onSubmit={form.onSubmit((values) => submitForm(props, values))}>
 
-            <Title>{course.courseName}</Title>
+            {course != null && <Title>{course.courseName}</Title>}
 
             <Select
                 label="Number of players"
@@ -75,6 +75,44 @@ function Course(props) {
             <Button type="submit">Submit</Button>
         </form>
     );
+}
+
+function submitForm(props, formValues) {
+    
+    /*
+    When the form is submitted, just submit the min/max times and date and let the
+    server determine if it will be ran immediately or if it will be scheduled
+    */
+
+    const numPlayers = parseInt(formValues.numPlayers);
+    const teeTimeDate = formValues.teeTimeDate;
+
+    // Need to set the earliest/latest time date to teeTimeDate
+
+    const fixTimeOnDate = (dateToFix) => {
+
+        var fixedDate = new Date(teeTimeDate);
+        fixedDate.setHours(dateToFix.getHours());
+        fixedDate.setMinutes(dateToFix.getMinutes());
+
+        return fixedDate;
+    }
+
+    const minTime = fixTimeOnDate(formValues.minTime);
+    const maxTime = fixTimeOnDate(formValues.maxTime);
+
+    axios.post('schedule', {
+        userId: 'lference',
+        clubId: props.clubId,
+        courseId: props.courseId,
+        date: teeTimeDate,
+        amtPlayers: numPlayers,
+        earliestTime: minTime,
+        latestTime: maxTime,
+        isInstant: true,
+        isHeadless: true,
+        checkout: false
+    })
 }
 
 export default Course;
