@@ -71,12 +71,12 @@ async function schedule (fastify, options) {
         const isValidConfig = config != null && fastify.validateFields(
             config,
             [
-                fastify.field('scheduleLimitDays')
+                fastify.field('scheduleDayOffset')
                     .num()
                     .required(),
 
-                fastify.field('scheduleLimitTime')
-                    .str()
+                fastify.field('scheduleTimeOffset')
+                    .num()
                     .required()
             ]
         )
@@ -117,7 +117,10 @@ async function doSchedule(fastify, reply, body, config) {
     const now = DateTime.now()
     const teeTimeDate = DateTime.fromISO(body.date)
 
-    const scheduleDate = teeTimeDate.minus({days: 7, hours: 3})
+    const scheduleDate = teeTimeDate.minus({
+        days: config.scheduleDayOffset,
+        hours: config.scheduleTimeOffset
+    })
 
     if (scheduleDate > now) {
 

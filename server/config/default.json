@@ -10,8 +10,8 @@
         },
 
         "chronogolf": {
-            "scheduleLimitDays": 8,
-            "scheduleLimitTime": "9:00 PM"
+            "scheduleDayOffset": 7,
+            "scheduleTimeOffset": 3
         }
     }
 }
