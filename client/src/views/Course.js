@@ -85,32 +85,27 @@ function submitForm(props, formValues) {
     */
 
     const numPlayers = parseInt(formValues.numPlayers);
-    const teeTimeDate = formValues.teeTimeDate;
+    const teeTimeDate = dayjs(formValues.teeTimeDate);
 
     // Need to set the earliest/latest time date to teeTimeDate
 
     const fixTimeOnDate = (dateToFix) => {
-
-        var fixedDate = new Date(teeTimeDate);
-        fixedDate.setHours(dateToFix.getHours());
-        fixedDate.setMinutes(dateToFix.getMinutes());
-
-        return fixedDate;
+        return teeTimeDate
+            .hour(dateToFix.hour())
+            .minute(dateToFix.minute())
     }
 
-    const minTime = fixTimeOnDate(formValues.minTime);
-    const maxTime = fixTimeOnDate(formValues.maxTime);
+    const minTime = fixTimeOnDate(dayjs(formValues.minTime));
+    const maxTime = fixTimeOnDate(dayjs(formValues.maxTime));
 
     axios.post('schedule', {
         userId: 'lference',
         clubId: props.clubId,
         courseId: props.courseId,
-        date: teeTimeDate,
+        date: teeTimeDate.toJSON(),
         amtPlayers: numPlayers,
-        earliestTime: minTime,
-        latestTime: maxTime,
-        isInstant: true,
-        isHeadless: true,
+        earliestTime: minTime.toJSON(),
+        latestTime: maxTime.toJSON(),
         checkout: false
     })
 }

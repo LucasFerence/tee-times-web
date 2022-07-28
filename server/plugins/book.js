@@ -4,8 +4,11 @@ import webdriver from 'selenium-webdriver'
 import chrome from 'selenium-webdriver/chrome.js'
 import { DateTime } from "luxon"
 
-// Example: 2022-06-12 4:00 PM
-const FORMAT = 'yyyy-MM-dd t'
+// Example: 2022-07-08
+const DATE_FORMAT = 'yyyy-LL-dd'
+
+// Example: 1:30 PM
+const TIME_FORMAT = 't'
 
 async function bookTime(fastify, options) {
 
@@ -16,10 +19,9 @@ async function doBookTime(fastify, params) {
 
     const options = new chrome.Options()
 
-    if (params.isHeadless) {
-        options.headless()
-        options.addArguments('--no-sandbox')
-    }
+    // Always set to headless
+    options.headless()
+    options.addArguments('--no-sandbox')
 
     const driver = new webdriver.Builder()
         .forBrowser('chrome')
@@ -35,10 +37,17 @@ async function doBookTime(fastify, params) {
     try {
         const clubId = params.clubId
         const courseId = params.courseId
-        const date = params.date
+        const date = DateTime.fromISO(params.date)
+
+        if (date.invalidExplanation) {
+            console.error(`Date: ${date.invalidExplanation}`)
+            return
+        }
+
+        const formattedDate = date.toFormat(DATE_FORMAT)
 
         var url = `https://www.chronogolf.com/club/${clubId}`
-            + `/widget?medium=widget&source=club#?date=${date}`
+            + `/widget?medium=widget&source=club#?date=${formattedDate}`
             + `&course_id=${courseId}&nb_holes=18&affiliation_type_ids=`
 
         const amtPlayers = params.amtPlayers
@@ -58,12 +67,11 @@ async function doBookTime(fastify, params) {
         await driver.get(url)
 
         // Calculate date ranges
-
-        const startDate = DateTime.fromFormat(`${params.date} ${params.earliestTime}`, FORMAT)
-        const endDate = DateTime.fromFormat(`${params.date} ${params.latestTime}`, FORMAT)
+        const startDate = DateTime.fromISO(params.earliestTime)
+        const endDate = DateTime.fromISO(params.latestTime)
 
         // Return a validation reason if necessary
-        if (startDate.invalidExplanation != null) {
+        if (startDate.invalidExplanation) {
             console.error(`Start date: ${startDate.invalidExplanation}`)
             return
         }
@@ -88,8 +96,17 @@ async function doBookTime(fastify, params) {
 
             // Trim the extra space around the value
             teeTimeValue = teeTimeValue.toString().trim()
+
+            // Calculate a datetime by parsing the time from widget
             
-            const currDate = DateTime.fromFormat(`${params.date} ${teeTimeValue}`, FORMAT)
+            // Parse it to new york time since that is the time returned from MCG Golf
+            // TODO: Make this more configurable or based on browser date (the date we are comparing to)
+            // This needs to be the same timezone that is beign rendered on the site
+            const currTime = DateTime.fromFormat(teeTimeValue, TIME_FORMAT)
+                .setZone('America/New_York', { keepLocalTime: true });
+            
+            const currDate = date.set({hour: currTime.hour, minute: currTime.minute})
+                .setZone('America/New_York', { keepLocalTime: true });
 
             if (currDate >= startDate && currDate <= endDate) {
 
