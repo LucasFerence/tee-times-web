@@ -2,7 +2,7 @@ import { React, useState, useEffect } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs'
 
-import { Button, Select, Title } from '@mantine/core';
+import { Button, Select, Title, useMantineTheme } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 
@@ -38,10 +38,18 @@ function Course(props) {
         }
     })
 
+    const theme = useMantineTheme();
+
+    const today = new Date()
+
     return (
         <form onSubmit={form.onSubmit((values) => submitForm(props, values))}>
 
             {course != null && <Title>{course.courseName}</Title>}
+
+            <div>
+                IMPORTANT: Any days highlighted in green will be executed upon immediately
+            </div>
 
             <Select
                 label="Number of players"
@@ -54,7 +62,13 @@ function Course(props) {
                 placeholder="Pick Date"
                 label="Tee time date"
                 required
-                minDate={dayjs(new Date()).toDate()}
+                minDate={today}
+                dayStyle={(date) =>
+                    date.getTime() > today.getTime()
+                    && dayjs(date).subtract(7, 'days').subtract(3, 'hours').toDate().getTime() <= today.getTime()
+                        ? { backgroundColor: theme.colors.green[2], color: theme.white }
+                        : null
+                }
                 {...form.getInputProps('teeTimeDate')}
             />
 
