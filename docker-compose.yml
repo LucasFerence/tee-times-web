@@ -3,16 +3,16 @@
 version: '3.7'
 
 services:
-  server:
+  server-ts:
     build:
-      context: ./server
+      context: ./server-ts
       dockerfile: Dockerfile
-    image: tee-times-web-server
-    container_name: tee-times-web-server
+    image: tee-times-web-server-ts
+    container_name: tee-times-web-server-ts
     restart: always
-    command: node server.js
+    command: node build/src/index.js
     volumes:
-      - ./server/:/usr/src/app
+      - ./server-ts/:/usr/src/app
       - /usr/src/app/node_modules
     ports:
       - "5050:5050"
