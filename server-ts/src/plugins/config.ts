@@ -13,4 +13,6 @@ const config: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   fastify.decorate('config', {getter: () => nodeConfig.get('root')});
 };
 
-export default fp(config);
+export default fp(config, {
+  name: 'config',
+});

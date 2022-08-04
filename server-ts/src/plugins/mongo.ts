@@ -29,4 +29,7 @@ const dbConnector: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   });
 };
 
-export default fp(dbConnector);
+export default fp(dbConnector, {
+  name: 'mongo',
+  dependencies: ['ajv', 'config'],
+});

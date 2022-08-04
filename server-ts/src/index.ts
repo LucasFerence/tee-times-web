@@ -1,18 +1,20 @@
 import fastify, {FastifyInstance} from 'fastify';
+import autoload from '@fastify/autoload';
 import {exit} from 'process';
+import path from 'path';
 
 const server: FastifyInstance = fastify();
 
 // Plugins
-server.register(require('./plugins/ajv'));
-server.register(require('./plugins/config'));
-server.register(require('./plugins/mongo'));
-server.register(require('./plugins/agenda'));
+server.register(autoload, {
+  dir: path.join(__dirname, 'plugins'),
+});
 
 // Routes
-
-// VMs
-server.register(require('./routes/viewmodels/testvm'));
+server.register(autoload, {
+  dir: path.join(__dirname, 'routes'),
+  dirNameRoutePrefix: false,
+});
 
 server.listen({port: 5050, host: '0.0.0.0'}, (err, address) => {
   if (err) {

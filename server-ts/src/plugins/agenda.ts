@@ -19,4 +19,7 @@ const agenda: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   fastify.decorate('agenda', agenda);
 };
 
-export default fp(agenda);
+export default fp(agenda, {
+  name: 'agenda',
+  dependencies: ['mongo'],
+});
