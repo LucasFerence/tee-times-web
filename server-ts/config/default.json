@@ -1,0 +1,17 @@
+{
+    "root": {
+
+        "db": {
+            "host": "mongo",
+            "port": 27017,
+            "db": "teetimes",
+            "username": "root",
+            "password": "password"
+        },
+
+        "chronogolf": {
+            "scheduleDayOffset": 7,
+            "scheduleTimeOffset": 3
+        }
+    }
+}
