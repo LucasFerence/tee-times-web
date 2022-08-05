@@ -1,9 +1,9 @@
 import {FastifyInstance} from 'fastify';
 import {Club, ClubType} from 'src/schema/chronogolf/club';
 
-async function registerClub(server: FastifyInstance) {
+export default async function registerClub(server: FastifyInstance) {
   server.post<{Body: ClubType}>(
-    '/registerClub',
+    '/registerChronogolfClub',
     {
       schema: {
         body: Club,
@@ -11,12 +11,9 @@ async function registerClub(server: FastifyInstance) {
     },
     async (request, reply) => {
       const club: ClubType = request.body;
-      const collection = server.mongo.db?.collection('clubs');
+      const collection = server.mongo.db?.collection('chronogolfClubs');
 
-      // Look for one that already exists
       const filter = {id: club.id};
-
-      // Mark as upsert so we either update or insert one
       const options = {upsert: true};
 
       const updateDoc = {
@@ -28,12 +25,9 @@ async function registerClub(server: FastifyInstance) {
         },
       };
 
-      // Insert club into database
       await collection?.updateOne(filter, updateDoc, options);
 
       reply.status(200);
     }
   );
 }
-
-export default registerClub;
