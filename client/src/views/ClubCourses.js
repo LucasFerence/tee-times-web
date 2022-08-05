@@ -6,13 +6,15 @@ import Course from './Course';
 
 function ClubCourses(props) {
 
+    const [club, setClub] = useState([]);
     const [courses, setCourses] = useState([]);
 
     useEffect(() => {
 
         axios.get(`courses/${props.clubId}`)
             .then(res => {
-                setCourses(res.data?.courses)
+                setClub(res.data);
+                setCourses(res.data?.courses);
             })
 
     }, [props.clubId]);
@@ -23,13 +25,13 @@ function ClubCourses(props) {
         <div>
             {
                 courses.map(course =>
-                    <Button key={course.courseId} onClick={() => setCurrCourse(course.courseId)}>
-                        {course.courseName}
+                    <Button key={course.id} onClick={() => setCurrCourse(course.id)}>
+                        {course.name}
                     </Button>
                 )
             }
 
-            {currCourse != null && <Course clubId={props.clubId} courseId={currCourse}/>}
+            {currCourse != null && <Course selectedCourse={currCourse} {... club}/>}
         </div>
     )
 }
