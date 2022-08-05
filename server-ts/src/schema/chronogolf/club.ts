@@ -4,6 +4,8 @@ import {Course} from './course';
 export const Club = Type.Object({
   id: Type.String(),
   name: Type.String(),
+  scheduleOffsetDays: Type.Integer(),
+  scheduleOffsetHours: Type.Integer(),
   courses: Type.Array(Course),
 });
 
