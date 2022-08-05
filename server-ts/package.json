@@ -14,7 +14,7 @@
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "posttest": "npm run lint",
-    "start": "node ./build/src/index.js"
+    "start": "NODE_PATH=./build node ./build/src/index.js"
   },
   "dependencies": {
     "@fastify/autoload": "^5.1.0",

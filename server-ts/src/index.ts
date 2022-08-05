@@ -1,9 +1,10 @@
-import fastify, {FastifyInstance} from 'fastify';
+import fastify from 'fastify';
 import autoload from '@fastify/autoload';
+import {TypeBoxTypeProvider} from '@fastify/type-provider-typebox';
 import {exit} from 'process';
 import path from 'path';
 
-const server: FastifyInstance = fastify();
+const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
 
 // Plugins
 server.register(autoload, {

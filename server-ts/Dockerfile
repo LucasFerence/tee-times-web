@@ -18,4 +18,6 @@ RUN npm install
 RUN npm run compile
 
 EXPOSE 5050
+
+ENV NODE_PATH=./build
 CMD [ "node", "build/src/index.js" ]
