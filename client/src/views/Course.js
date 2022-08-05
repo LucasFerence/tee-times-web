@@ -42,7 +42,7 @@ function Course(props) {
     const isInstantDate = (date) => {
         return dayjs(today)
                 .add(props.scheduleOffsetDays, 'days')
-                .add(props.scheduleOffsetHours, 'hours')
+                .hour(props.scheduleOffsetHours)
                 .toDate().getTime() >= date.getTime()
             && dayjs(today)
                 .subtract(1, 'days')
@@ -118,12 +118,12 @@ function submitForm(props, formValues) {
     const minTime = fixTimeOnDate(dayjs(formValues.minTime));
     const maxTime = fixTimeOnDate(dayjs(formValues.maxTime));
 
-    axios.post('schedule', {
+    axios.post('scheduleChronogolf', {
         userId: 'lference',
-        clubId: props.clubId,
-        courseId: props.courseId,
+        clubId: props.id,
+        courseId: props.selectedCourse,
         date: teeTimeDate.toJSON(),
-        amtPlayers: numPlayers,
+        playerCount: numPlayers,
         earliestTime: minTime.toJSON(),
         latestTime: maxTime.toJSON(),
         checkout: false
