@@ -31,8 +31,6 @@ export default async function getClubs(server: FastifyInstance) {
 
       const clubs = (await collection?.find({}, options).toArray()) as Club[];
 
-      console.log(clubs);
-
       reply.send(clubs);
     }
   );
