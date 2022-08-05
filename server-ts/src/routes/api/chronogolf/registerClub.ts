@@ -10,23 +10,7 @@ export default async function registerClub(server: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const club: Club = request.body;
-      const collection = server.mongo.db?.collection('chronogolfClubs');
-
-      const filter = {id: club.id};
-      const options = {upsert: true};
-
-      const updateDoc = {
-        $set: {
-          name: club.name,
-          scheduleOffsetDays: club.scheduleOffsetDays,
-          scheduleOffsetHours: club.scheduleOffsetHours,
-          courses: club.courses,
-        },
-      };
-
-      await collection?.updateOne(filter, updateDoc, options);
-
+      server.upsertChronogolfClub(request.body);
       reply.status(200);
     }
   );
