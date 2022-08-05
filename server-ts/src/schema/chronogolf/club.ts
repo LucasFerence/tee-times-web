@@ -1,12 +1,15 @@
 import {Static, Type} from '@sinclair/typebox';
-import {Course} from './course';
+import {CourseType} from './course';
+import {WithId, Document} from 'node_modules/mongodb';
 
-export const Club = Type.Object({
+export const ClubType = Type.Object({
   id: Type.String(),
   name: Type.String(),
   scheduleOffsetDays: Type.Integer(),
   scheduleOffsetHours: Type.Integer(),
-  courses: Type.Array(Course),
+  courses: Type.Array(CourseType),
 });
 
-export type ClubType = Static<typeof Club>;
+type Type = Static<typeof ClubType>;
+
+export interface Club extends Type, WithId<Document> {}

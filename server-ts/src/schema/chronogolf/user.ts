@@ -1,9 +1,12 @@
 import {Static, Type} from '@sinclair/typebox';
+import {WithId, Document} from 'node_modules/mongodb';
 
-export const User = Type.Object({
+export const UserType = Type.Object({
   id: Type.String(),
   username: Type.String(),
   password: Type.String(),
 });
 
-export type UserType = Static<typeof User>;
+type Type = Static<typeof UserType>;
+
+export interface User extends Type, WithId<Document> {}
