@@ -1,7 +1,7 @@
 import {FastifyInstance} from 'fastify';
 import {Static, Type} from '@sinclair/typebox';
 
-const Request = Type.Object({
+const RequestType = Type.Object({
   userId: Type.String(),
   clubId: Type.String(),
   courseId: Type.String(),
@@ -12,27 +12,27 @@ const Request = Type.Object({
   checkout: Type.Optional(Type.Boolean()),
 });
 
-type RequestType = Static<typeof Request>;
+type Request = Static<typeof RequestType>;
 
-const Response = Type.Object({
+const ResponseType = Type.Object({
   executionTime: Type.String({format: 'date-time'}),
 });
 
-type ResponseType = Static<typeof Response>;
+type Response = Static<typeof ResponseType>;
 
 export default async function scheduleTime(server: FastifyInstance) {
-  server.post<{Body: RequestType; Reply: ResponseType}>(
+  server.post<{Body: Request; Reply: Response}>(
     '/scheduleChronogolf',
     {
       schema: {
-        body: Request,
+        body: RequestType,
         response: {
-          200: Response,
+          200: ResponseType,
         },
       },
     },
     async (request, reply) => {
-      const scheduleDetails: RequestType = request.body;
+      const scheduleDetails: Request = request.body;
       const user = await server.getChronogolfUser(scheduleDetails.userId);
 
       console.log(user);

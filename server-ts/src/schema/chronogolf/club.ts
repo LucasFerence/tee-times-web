@@ -13,3 +13,5 @@ export const ClubType = Type.Object({
 type Type = Static<typeof ClubType>;
 
 export interface Club extends Type, WithId<Document> {}
+
+export const CLUB_COLLECTION = 'chronogolfClubs';

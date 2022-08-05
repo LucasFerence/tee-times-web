@@ -10,3 +10,5 @@ export const UserType = Type.Object({
 type Type = Static<typeof UserType>;
 
 export interface User extends Type, WithId<Document> {}
+
+export const USER_COLLECTION = 'chronogolfUsers';

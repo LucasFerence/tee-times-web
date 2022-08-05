@@ -1,8 +1,6 @@
 import {FastifyInstance, FastifyPluginAsync} from 'fastify';
 import fp from 'fastify-plugin';
-import {User} from 'src/schema/chronogolf/user';
-
-const COLLECTION = 'chronogolfUsers';
+import {User, USER_COLLECTION} from 'src/schema/chronogolf/user';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -24,7 +22,7 @@ const chronogolfUsers: FastifyPluginAsync = async (
 Gets a user from the database using their app level ID
 */
 async function getUser(fastify: FastifyInstance, id: string): Promise<User> {
-  const collection = fastify.mongo.db?.collection(COLLECTION);
+  const collection = fastify.mongo.db?.collection(USER_COLLECTION);
   const query = {id: id};
 
   return (await collection?.findOne(query)) as User;
@@ -34,7 +32,7 @@ async function getUser(fastify: FastifyInstance, id: string): Promise<User> {
 Updates or inserts a user into the db
 */
 async function upsertUser(fastify: FastifyInstance, user: User) {
-  const collection = fastify.mongo.db?.collection(COLLECTION);
+  const collection = fastify.mongo.db?.collection(USER_COLLECTION);
 
   const filter = {id: user.id};
   const options = {upsert: true};

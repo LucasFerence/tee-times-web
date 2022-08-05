@@ -1,8 +1,6 @@
 import {FastifyInstance, FastifyPluginAsync} from 'fastify';
 import fp from 'fastify-plugin';
-import {Club} from 'src/schema/chronogolf/club';
-
-const COLLECTION = 'chronogolfClubs';
+import {Club, CLUB_COLLECTION} from 'src/schema/chronogolf/club';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -24,7 +22,7 @@ const chronogolfClubs: FastifyPluginAsync = async (
 Gets a club from the database using the club ID
 */
 async function getClub(fastify: FastifyInstance, id: string): Promise<Club> {
-  const collection = fastify.mongo.db?.collection(COLLECTION);
+  const collection = fastify.mongo.db?.collection(CLUB_COLLECTION);
   const query = {id: id};
 
   return (await collection?.findOne(query)) as Club;
@@ -34,7 +32,7 @@ async function getClub(fastify: FastifyInstance, id: string): Promise<Club> {
 Updates or inserts a club and it's associated courses into the db
 */
 async function upsertClub(fastify: FastifyInstance, club: Club) {
-  const collection = fastify.mongo.db?.collection(COLLECTION);
+  const collection = fastify.mongo.db?.collection(CLUB_COLLECTION);
 
   const filter = {id: club.id};
   const options = {upsert: true};
