@@ -37,7 +37,7 @@ async function bookTime(fastify: FastifyInstance, details: ScheduleDetails) {
   // Configure the webdriver we will use for running the script
   const driver = new webdriver.Builder()
     .forBrowser('chrome')
-    .usingServer('http://webdriver:4444/wd/hub')
+    .usingServer('http://selenium-hub:4444/wd/hub')
     .setChromeOptions(options)
     .build();
 
