@@ -53,7 +53,7 @@ export default async function scheduleTime(server: FastifyInstance) {
 
       const jobs = await agenda.jobs({
         name: taskId,
-        nextRunAt: {$exists: true},
+        nextRunAt: {$ne: null},
       });
 
       if (jobs !== null && jobs.length !== 0) {
@@ -62,9 +62,13 @@ export default async function scheduleTime(server: FastifyInstance) {
         return;
       }
 
-      agenda.define(taskId, (job: Job) => {
+      agenda.define(taskId, (job: Job, done) => {
         console.log(`Starting service for task: ${taskId}`);
-        server.bookChronogolfTime(scheduleDetails);
+
+        // TODO: perhaps disconnect the bookChronogolf time from fastify and include schedule
+        // details on the job data itself
+        // server.bookChronogolfTime(scheduleDetails);
+        done();
       });
 
       const now = DateTime.now();
@@ -79,8 +83,10 @@ export default async function scheduleTime(server: FastifyInstance) {
         console.log(`Scheduling job: ${taskId}`);
         agenda.schedule(scheduleCutoff.toJSDate(), taskId, undefined);
       } else {
-        console.log(`Executing job immediately: ${taskId}`);
-        agenda.now(taskId, undefined);
+        const plusOneMinute = now.plus({minute: 3});
+        console.log(`Testing execution in one minute: ${taskId}`);
+        console.log(plusOneMinute);
+        agenda.schedule(plusOneMinute.toJSDate(), taskId, {name: 'sauce'});
       }
     }
   );
