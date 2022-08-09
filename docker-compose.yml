@@ -3,16 +3,16 @@
 version: '3.7'
 
 services:
-  server:
+  server-ts:
     build:
-      context: ./server
+      context: ./server-ts
       dockerfile: Dockerfile
-    image: tee-times-web-server
-    container_name: tee-times-web-server
+    image: tee-times-web-server-ts
+    container_name: tee-times-web-server-ts
     restart: always
-    command: node server.js
+    command: node build/src/index.js
     volumes:
-      - ./server/:/usr/src/app
+      - ./server-ts/:/usr/src/app
       - /usr/src/app/node_modules
     ports:
       - "5050:5050"
@@ -38,11 +38,20 @@ services:
       - "27017:27017"
     volumes:
       - /data/db
-  webdriver:
-    image: selenium/standalone-chrome
-    restart: always
+  chrome-driver:
+    image: selenium/node-chrome:4.3.0-20220726
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  selenium-hub:
+    image: selenium/hub:4.3.0-20220726
+    container_name: selenium-hub
     ports:
+      - "4442:4442"
+      - "4443:4443"
       - "4444:4444"
-    volumes:
-      - /dev/shm:/dev/shm
     

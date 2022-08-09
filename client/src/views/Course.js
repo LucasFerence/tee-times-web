@@ -13,12 +13,10 @@ function Course(props) {
 
     useEffect(() => {
 
-        axios.get(`courses/${props.clubId}/${props.courseId}`)
-            .then(res => {
-                setCourse(res.data)
-            })
+        const selected = props.courses.find(c => c.id === props.selectedCourse)
+        setCourse(selected)
 
-    }, [props.clubId, props.courseId])
+    }, [props.courses, props.selectedCourse])
 
     // Initialize the form
 
@@ -41,11 +39,20 @@ function Course(props) {
     const theme = useMantineTheme();
 
     const today = new Date()
+    const isInstantDate = (date) => {
+        return dayjs(today)
+                .add(props.scheduleOffsetDays, 'days')
+                .hour(props.scheduleOffsetHours)
+                .toDate().getTime() >= date.getTime()
+            && dayjs(today)
+                .subtract(1, 'days')
+                .toDate().getTime() < date.getTime()
+    }
 
     return (
         <form onSubmit={form.onSubmit((values) => submitForm(props, values))}>
 
-            {course != null && <Title>{course.courseName}</Title>}
+            {course != null && <Title>{course.name}</Title>}
 
             <div>
                 IMPORTANT: Any days highlighted in green will be executed upon immediately
@@ -64,8 +71,7 @@ function Course(props) {
                 required
                 minDate={today}
                 dayStyle={(date) =>
-                    date.getTime() > today.getTime()
-                    && dayjs(date).subtract(7, 'days').subtract(3, 'hours').toDate().getTime() <= today.getTime()
+                    isInstantDate(date)
                         ? { backgroundColor: theme.colors.green[2], color: theme.white }
                         : null
                 }
@@ -112,12 +118,12 @@ function submitForm(props, formValues) {
     const minTime = fixTimeOnDate(dayjs(formValues.minTime));
     const maxTime = fixTimeOnDate(dayjs(formValues.maxTime));
 
-    axios.post('schedule', {
+    axios.post('scheduleChronogolf', {
         userId: 'lference',
-        clubId: props.clubId,
-        courseId: props.courseId,
+        clubId: props.id,
+        courseId: props.selectedCourse,
         date: teeTimeDate.toJSON(),
-        amtPlayers: numPlayers,
+        playerCount: numPlayers,
         earliestTime: minTime.toJSON(),
         latestTime: maxTime.toJSON(),
         checkout: false

@@ -23,8 +23,8 @@ function Clubs(props) {
         <div>
             {
                 clubs.map(club =>
-                    <Button key={club.clubId} onClick={() => setCurrClub(club.clubId)}>
-                        {club.clubName}
+                    <Button key={club.id} onClick={() => setCurrClub(club.id)}>
+                        {club.name}
                     </Button>
                 )
             }

@@ -9,11 +9,15 @@ WORKDIR /usr/src/app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package*.json ./
+COPY tsconfig.json ./
+COPY src ./src
+
+RUN ls -a
 
 RUN npm install
-
-# Bundle app source
-COPY . .
+RUN npm run compile
 
 EXPOSE 5050
-CMD [ "node", "server.js" ]
+
+ENV NODE_PATH=./build
+CMD [ "node", "build/src/index.js" ]
