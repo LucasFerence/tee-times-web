@@ -6,6 +6,7 @@ import {
 } from 'src/schema/chronogolf/schedule';
 import {DateTime} from 'luxon';
 import {Job} from 'agenda';
+import {ChronogolfBookJob} from 'src/plugins/chronogolf/chronogolfBookJob';
 
 const ResponseType = Type.Object({
   executionTime: Type.String({format: 'date-time'}),
@@ -62,13 +63,10 @@ export default async function scheduleTime(server: FastifyInstance) {
         return;
       }
 
-      agenda.define(taskId, (job: Job, done) => {
-        console.log(`Starting service for task: ${taskId}`);
+      const chronogolfJob = new ChronogolfBookJob();
 
-        // TODO: perhaps disconnect the bookChronogolf time from fastify and include schedule
-        // details on the job data itself
-        // server.bookChronogolfTime(scheduleDetails);
-        done();
+      agenda.define(taskId, (job: Job, done) => {
+        chronogolfJob.execute(server, job, done);
       });
 
       const now = DateTime.now();
@@ -81,12 +79,20 @@ export default async function scheduleTime(server: FastifyInstance) {
 
       if (scheduleCutoff > now) {
         console.log(`Scheduling job: ${taskId}`);
-        agenda.schedule(scheduleCutoff.toJSDate(), taskId, undefined);
+        agenda.schedule(
+          scheduleCutoff.toJSDate(),
+          taskId,
+          chronogolfJob.toData(scheduleDetails)
+        );
       } else {
-        const plusOneMinute = now.plus({minute: 3});
+        const plusOneMinute = now.plus({minute: 1});
         console.log(`Testing execution in one minute: ${taskId}`);
         console.log(plusOneMinute);
-        agenda.schedule(plusOneMinute.toJSDate(), taskId, {name: 'sauce'});
+        agenda.schedule(
+          plusOneMinute.toJSDate(),
+          taskId,
+          chronogolfJob.toData(scheduleDetails)
+        );
       }
     }
   );
