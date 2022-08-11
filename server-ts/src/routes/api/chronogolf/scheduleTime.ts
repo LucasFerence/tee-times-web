@@ -9,19 +9,13 @@ import {Job} from 'agenda';
 import {ChronogolfBookJob} from 'src/plugins/chronogolf/chronogolfBookJob';
 
 const ResponseType = Type.Object({
-  executionTime: Type.String({format: 'date-time'}),
+  message: Type.String(),
 });
 
 type Response = Static<typeof ResponseType>;
 
-const ErrorType = Type.Object({
-  message: Type.String(),
-});
-
-type Error = Static<typeof ErrorType>;
-
 export default async function scheduleTime(server: FastifyInstance) {
-  server.post<{Body: ScheduleDetails; Reply: Response | Error}>(
+  server.post<{Body: ScheduleDetails; Reply: Response}>(
     '/scheduleChronogolf',
     {
       schema: {
@@ -59,7 +53,10 @@ export default async function scheduleTime(server: FastifyInstance) {
 
       if (jobs !== null && jobs.length !== 0) {
         reply.status(400);
-        reply.send({message: 'Tee time is already scheduled!'});
+        reply.send({
+          message:
+            'You already have a tee time on the selected date for that course!',
+        });
         return;
       }
 
@@ -79,14 +76,21 @@ export default async function scheduleTime(server: FastifyInstance) {
 
       if (scheduleCutoff > now) {
         console.log(`Scheduling job: ${taskId}`);
+
         agenda.schedule(
           scheduleCutoff.toJSDate(),
           taskId,
           chronogolfJob.toData(scheduleDetails)
         );
+
+        reply.send({
+          message: `Tee time has been scheduled to book at ${scheduleCutoff.toISO()}`,
+        });
       } else {
         console.log(`Executing job immediately: ${taskId}`);
         agenda.now(taskId, chronogolfJob.toData(scheduleDetails));
+
+        reply.send({message: 'Tee time booked immediately!'});
       }
     }
   );
