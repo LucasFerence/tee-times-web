@@ -85,14 +85,8 @@ export default async function scheduleTime(server: FastifyInstance) {
           chronogolfJob.toData(scheduleDetails)
         );
       } else {
-        const plusOneMinute = now.plus({minute: 1});
-        console.log(`Testing execution in one minute: ${taskId}`);
-        console.log(plusOneMinute);
-        agenda.schedule(
-          plusOneMinute.toJSDate(),
-          taskId,
-          chronogolfJob.toData(scheduleDetails)
-        );
+        console.log(`Executing job immediately: ${taskId}`);
+        agenda.now(taskId, chronogolfJob.toData(scheduleDetails));
       }
     }
   );

@@ -30,11 +30,17 @@ const agenda: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     await fastify.agenda.close();
   });
 
+  // When the server starts up and all plugins and routes are ready, refresh jobs
   fastify.addHook('onReady', async () => {
     refreshJobs(fastify);
   });
 };
 
+/*
+Refresh all jobs that had not successfuly completed or are still scheduled
+when the server shut down. This ensures that regardless of restart/failure
+all jobs that were scheduled are maintained
+*/
 async function refreshJobs(fastify: FastifyInstance) {
   const agenda: Agenda = fastify.agenda;
 
@@ -57,6 +63,7 @@ async function refreshJobs(fastify: FastifyInstance) {
     const definition: JobDefinition | undefined = fastify.jobTypes.get(type);
 
     // If we have an associated execution, register it with the method
+    // By redefining, we are bringing the job back into memoryg
     if (definition !== undefined) {
       agenda.define(jobData.name, (job, done) => {
         definition.execute(fastify, job, done);
