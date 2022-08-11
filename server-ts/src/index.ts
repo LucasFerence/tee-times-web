@@ -25,3 +25,6 @@ server.listen({port: 5050, host: '0.0.0.0'}, (err, address) => {
 
   console.log(`Server listening at ${address}`);
 });
+
+process.on('SIGTERM', () => server.close());
+process.on('SIGINT', () => server.close());

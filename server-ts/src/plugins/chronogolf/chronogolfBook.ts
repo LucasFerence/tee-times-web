@@ -119,6 +119,9 @@ async function bookTime(fastify: FastifyInstance, details: ScheduleDetails) {
         teeTimeButtonEl = await teeTimeEl.findElement({
           className: 'widget-teetime-rate',
         });
+
+        console.log(`Found tee time at: ${teeTimeElVal}`);
+
         break;
       }
     }
