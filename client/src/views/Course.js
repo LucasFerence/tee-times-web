@@ -2,7 +2,7 @@ import { React, useState, useEffect } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs'
 
-import { Button, Select, Title, useMantineTheme } from '@mantine/core';
+import { Button, Select, Title, useMantineTheme, Alert } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 
@@ -48,56 +48,72 @@ function Course(props) {
                 .subtract(1, 'days')
                 .toDate().getTime() < date.getTime()
     }
+    
+    // Store the backend resposne on the state
+    const [response, setResponse] = useState();
 
     return (
-        <form onSubmit={form.onSubmit((values) => submitForm(props, values))}>
+        <div>
+            {response != null &&
+                <Alert
+                    title={response.isSuccess ? 'Success!' : 'Something went wrong...'}
+                    color={response.isSuccess ? 'green' : 'red'}
+                >
+                    {response.message}
+                </Alert>
+            }
 
-            {course != null && <Title>{course.name}</Title>}
+            <form onSubmit={form.onSubmit((values) => {
+                submitForm(props, values, setResponse);
+                form.reset();
+            })}>
+                {course != null && <Title>{course.name}</Title>}
 
-            <div>
-                IMPORTANT: Any days highlighted in green will be executed upon immediately
-            </div>
+                <div>
+                    IMPORTANT: Any days highlighted in green will be executed upon immediately
+                </div>
 
-            <Select
-                label="Number of players"
-                data={['1','2','3','4']}
-                required
-                {...form.getInputProps('numPlayers')}
-            />
+                <Select
+                    label="Number of players"
+                    data={['1','2','3','4']}
+                    required
+                    {...form.getInputProps('numPlayers')}
+                />
 
-            <DatePicker
-                placeholder="Pick Date"
-                label="Tee time date"
-                required
-                minDate={today}
-                dayStyle={(date) =>
-                    isInstantDate(date)
-                        ? { backgroundColor: theme.colors.green[2], color: theme.white }
-                        : null
-                }
-                {...form.getInputProps('teeTimeDate')}
-            />
+                <DatePicker
+                    placeholder="Pick Date"
+                    label="Tee time date"
+                    required
+                    minDate={today}
+                    dayStyle={(date) =>
+                        isInstantDate(date)
+                            ? { backgroundColor: theme.colors.green[2], color: theme.white }
+                            : null
+                    }
+                    {...form.getInputProps('teeTimeDate')}
+                />
 
-            <TimeInput
-                label="Earliest Time"
-                format="12"
-                required
-                {...form.getInputProps('minTime')}
-            />
+                <TimeInput
+                    label="Earliest Time"
+                    format="12"
+                    required
+                    {...form.getInputProps('minTime')}
+                />
 
-            <TimeInput
-                label="Latest Time"
-                format="12"
-                required
-                {...form.getInputProps('maxTime')}
-            />
+                <TimeInput
+                    label="Latest Time"
+                    format="12"
+                    required
+                    {...form.getInputProps('maxTime')}
+                />
 
-            <Button type="submit">Submit</Button>
-        </form>
+                <Button type="submit">Submit</Button>
+            </form>
+        </div>
     );
 }
 
-function submitForm(props, formValues) {
+async function submitForm(props, formValues, setResponse) {
     
     /*
     When the form is submitted, just submit the min/max times and date and let the
@@ -127,6 +143,18 @@ function submitForm(props, formValues) {
         earliestTime: minTime.toJSON(),
         latestTime: maxTime.toJSON(),
         checkout: false
+    })
+    .catch(err => {
+        setResponse({
+            isSuccess: false,
+            message: err.response.data?.message
+        })
+    })
+    .then(res => {
+        setResponse({
+            isSuccess: true,
+            message: res.data?.message
+        })
     })
 }
 
