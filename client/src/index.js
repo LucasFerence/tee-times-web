@@ -12,6 +12,7 @@ root.render(
       domain="dev-fkh-ll2p.us.auth0.com"
       clientId="aDmrCoY20lxhQOi7GDkq5pRLrfJU2mf9"
       redirectUri={window.location.origin}
+      audience="http://localhost:5050"
     >
 
       <App />

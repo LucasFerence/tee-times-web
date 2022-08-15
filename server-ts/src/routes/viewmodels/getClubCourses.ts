@@ -14,6 +14,8 @@ export default async function getClubCourses(server: FastifyInstance) {
           200: ClubType,
         },
       },
+      preValidation: (req, reply) =>
+        server.authorize(req, reply, ['read:clubCourses']),
     },
     async (request, reply) => {
       const {clubId} = request.params;

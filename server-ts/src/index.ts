@@ -3,12 +3,19 @@ import autoload from '@fastify/autoload';
 import {TypeBoxTypeProvider} from '@fastify/type-provider-typebox';
 import {exit} from 'process';
 import path from 'path';
+import 'fastify-auth0-verify';
 
 const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
 
 // Plugins
 server.register(autoload, {
   dir: path.join(__dirname, 'plugins'),
+});
+
+// Auth
+server.register(require('fastify-auth0-verify'), {
+  domain: 'dev-fkh-ll2p.us.auth0.com',
+  audience: 'http://localhost:5050',
 });
 
 // Routes
