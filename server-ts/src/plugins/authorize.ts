@@ -23,14 +23,17 @@ declare module 'fastify' {
       permissions?: [string]
     ) => void;
   }
-
-  interface FastifyRequest {
-    permissions: [string];
-  }
 }
 
-// TODO: Need a way to add permissions to the request before preValidation is called
-const authorize: FastifyPluginAsync = async (fastify: FastifyInstance) => {
+const auth: FastifyPluginAsync = async (fastify: FastifyInstance) => {
+  // Authenticate EVERY request
+  fastify.addHook(
+    'preValidation',
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      await fastify.authenticate(request, reply);
+    }
+  );
+
   fastify.decorate(
     'authorize',
     async (
@@ -38,9 +41,6 @@ const authorize: FastifyPluginAsync = async (fastify: FastifyInstance) => {
       reply: FastifyReply,
       permissions?: [string]
     ) => {
-      // First authenticate
-      await fastify.authenticate(request, reply);
-
       const userPermissions = request.user.permissions;
 
       if (permissions && !permissions.every(p => userPermissions.includes(p))) {
@@ -51,6 +51,6 @@ const authorize: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   );
 };
 
-export default fp(authorize, {
+export default fp(auth, {
   name: 'auth',
 });
