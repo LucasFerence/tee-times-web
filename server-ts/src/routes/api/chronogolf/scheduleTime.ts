@@ -24,6 +24,8 @@ export default async function scheduleTime(server: FastifyInstance) {
           200: ResponseType,
         },
       },
+      preValidation: (req, reply) =>
+        server.authorize(req, reply, ['write:scheduleTime']),
     },
     async (request, reply) => {
       const scheduleDetails: ScheduleDetails = request.body;

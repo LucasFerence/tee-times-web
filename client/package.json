@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@auth0/auth0-react": "^1.10.2",
     "@mantine/core": "^4.2.12",
     "@mantine/dates": "^4.2.12",
     "@mantine/form": "^5.0.0",

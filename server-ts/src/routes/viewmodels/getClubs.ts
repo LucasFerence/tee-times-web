@@ -18,6 +18,8 @@ export default async function getClubs(server: FastifyInstance) {
           200: ResponseType,
         },
       },
+      preValidation: (req, reply) =>
+        server.authorize(req, reply, ['read:courses']),
     },
     async (request, reply) => {
       const collection = server.mongo.db?.collection(CLUB_COLLECTION);

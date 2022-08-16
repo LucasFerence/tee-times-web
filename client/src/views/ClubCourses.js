@@ -1,4 +1,6 @@
 import { React, useState, useEffect } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+
 import axios from 'axios';
 
 import { Button } from '@mantine/core';
@@ -9,15 +11,29 @@ function ClubCourses(props) {
     const [club, setClub] = useState([]);
     const [courses, setCourses] = useState([]);
 
+    const { getAccessTokenSilently } = useAuth0();
+
     useEffect(() => {
 
-        axios.get(`courses/${props.clubId}`)
-            .then(res => {
-                setClub(res.data);
-                setCourses(res.data?.courses);
-            })
+        const fetchData = async () => {
+            const token = await getAccessTokenSilently();
 
-    }, [props.clubId]);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+    
+            axios.get(`courses/${props.clubId}`, config)
+                .then(res => {
+                    setClub(res.data);
+                    setCourses(res.data?.courses);
+                })
+        }
+
+        fetchData()
+
+    }, [props.clubId, getAccessTokenSilently]);
 
     const [currCourse, setCurrCourse] = useState();
 
