@@ -12,7 +12,7 @@ export class ChronogolfBookJob extends JobDefinition {
     console.log(`Starting service for task ${job.attrs.name}`);
 
     const scheduleDetails = job.attrs.data?.details as ScheduleDetails;
-    fastify.bookChronogolfTime(scheduleDetails);
+    // book time via secure server
 
     done();
   }
